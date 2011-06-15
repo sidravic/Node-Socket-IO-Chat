@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> ChatRoom </title>
+        <style>
+            #header{
+            	height:40px;
+            	background:#FFFFFF;
+            	color:#FFF;
+            	width:100%;
+            	background-color:#033649;
+            	font-size:30px;	
+            	font-weight:bold;
+            	-webkit-box-shadow: 10px 10px 5px #888;
+            	position:relative;
+            	width:920px;
+            }
+
+            body{
+            	margin:auto;
+            	width:920px;
+            	background:url('bg.png') #F2F2F2 repeat;
+            	color:#F2F2F2;
+            }
+
+            textarea{
+            	width: 900px;
+            	height: 60px;
+            	padding: 5px;
+            	font-size: 16px;
+
+            }
+            
+            #content{
+                display:block;
+                
+            }
+            
+            #chat-console{
+            	bottom:10px;
+            }
+            
+            #message{
+                padding:5px;
+                background:#FFF;
+                -webkit-box-shadow: 10px 10px 5px #888;
+                margin-top:5px;
+            }
+            
+            #chat-log{
+                color:#000;
+                font-weight:bold;
+                margin-top:1em;
+                width:900px;
+                overflow:auto;
+                height:300px;
+            }
+            
+           
+            
+        </style>
+        <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js'></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+        $(document).ready(function(){
+          //  ws = new WebSocket('ws://localhost:8080');
+            socket = new io.Socket('192.168.1.139', {port:4000});
+            socket.connect();
+            console.log('connecting...');
+            
+            socket.on('connect', function(){
+                console.log("connected")
+            });
+            
+            socket.on("message", function(message){
+//                alert(message);
+                var data = message;
+                
+                $('#chat-log').append('<div id="message">' + data + '</div>');
+            });
+            
+            $('textarea').keypress(function(event){
+               if(event.keyCode != 13) return;
+               
+               var msg = $('textarea').val();
+               if(msg){
+               	$('textarea').val("");
+              // 	$('#chat-log').scrollBy(1,10000000);
+              //  	$('textarea').focus();
+               	  socket.send(msg);
+               	
+               } 
+
+            });
+            
+        })
+            
+        </script>
+    </head>
+    
+    <body>
+        <div id="header">
+            <div id="logo"> Node Chat </div>            
+        </div>
+
+        <div id="content">
+            <div id="chat-log">
+            </div>
+            
+            <div id="chat-console">
+                <textarea rows="5" cols="40"></textarea>    
+            </div>
+        </div>
+
+        <div id="footer">
+            
+        </div>
+    </body>
+
+</html>
